@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DramaSpace / Sanjoy Somadder — Creative Concept Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+/* ========== TOKENS ========== */
+:root{
+  --bg:#080808; --bg2:#111111; --tx:#F5F5F5; --mu:#A3A3A3; --ac:#C9A46C;
+  --sans:'Manrope',system-ui,sans-serif; --serif:'Playfair Display',Georgia,serif;
+  --pad:clamp(20px,5vw,72px); --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;width:100%;height:100%;object-fit:cover;background:#1a1612}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.site{display:none}
+body[data-site="drama"] #drama,body[data-site="sanjoy"] #sanjoy{display:block}
+body[data-site="drama"] .nav-sanjoy,body[data-site="sanjoy"] .nav-drama{display:none}
+
+/* grain + cursor */
+body::after{content:"";position:fixed;inset:-50%;z-index:90;pointer-events:none;opacity:.07;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-4%,3%)}50%{transform:translate(3%,-5%)}75%{transform:translate(-2%,-3%)}100%{transform:translate(4%,4%)}}
+.cursor{position:fixed;left:0;top:0;width:14px;height:14px;border:1px solid var(--ac);border-radius:50%;z-index:100;pointer-events:none;transition:width .3s var(--ease),height .3s var(--ease),background .3s;mix-blend-mode:difference}
+.cursor.big{width:64px;height:64px;background:rgba(201,164,108,.25)}
+@media(pointer:coarse){.cursor{display:none}}
+
+/* ========== NAV ========== */
+.nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);width:min(1240px,calc(100% - 24px));z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-radius:100px;transition:all .5s var(--ease)}
+.nav.small{padding:10px 22px;background:rgba(10,10,10,.78);backdrop-filter:blur(14px);width:min(980px,calc(100% - 24px));box-shadow:0 0 0 1px rgba(255,255,255,.07)}
+.logo{font-weight:800;letter-spacing:.18em;font-size:.85rem}
+.menu{display:flex;gap:30px;font-size:.72rem;letter-spacing:.2em;font-weight:600}
+.menu a{color:var(--mu);transition:color .3s;position:relative}
+.menu a:hover,.menu a.on{color:var(--tx)}
+.menu a.on::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:var(--ac)}
+.switch{display:flex;gap:4px;font-size:.68rem;letter-spacing:.14em;border:1px solid rgba(255,255,255,.15);border-radius:100px;padding:3px}
+.switch button{padding:6px 12px;border-radius:100px;color:var(--mu)}
+body[data-site="drama"] .switch [data-s="drama"],body[data-site="sanjoy"] .switch [data-s="sanjoy"]{background:var(--tx);color:var(--bg)}
+.burger{display:none;width:44px;height:44px;position:relative}
+.burger i{position:absolute;left:10px;right:10px;height:1px;background:var(--tx);transition:.4s var(--ease)}
+.burger i:first-child{top:18px}.burger i:last-child{top:26px}
+.burger.open i:first-child{top:22px;transform:rotate(45deg)}.burger.open i:last-child{top:22px;transform:rotate(-45deg)}
+.sheet{position:fixed;inset:0;z-index:45;background:var(--bg);display:flex;flex-direction:column;justify-content:center;gap:18px;padding:var(--pad);clip-path:circle(0 at 100% 0);transition:clip-path .8s var(--ease);font-family:var(--serif);font-size:2.4rem}
+.sheet.open{clip-path:circle(150% at 100% 0)}
+@media(max-width:900px){.menu{display:none}.burger{display:block}.switch{margin-left:auto;margin-right:6px}}
+
+/* ========== SHARED ========== */
+section{position:relative}
+.wrap{padding:clamp(80px,12vw,160px) var(--pad)}
+.label{font-size:.7rem;letter-spacing:.3em;color:var(--ac);font-weight:600;margin-bottom:22px}
+.h-xl{font-family:var(--serif);font-weight:500;font-size:clamp(2.4rem,7vw,6.5rem);line-height:1.02;letter-spacing:-.02em}
+.h-lg{font-family:var(--serif);font-weight:500;font-size:clamp(2rem,4.6vw,4.2rem);line-height:1.1}
+.mu{color:var(--mu)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:18px 32px;min-height:52px;border-radius:100px;font-size:.72rem;letter-spacing:.2em;font-weight:700;transition:background .4s,color .4s,border-color .4s;will-change:transform}
+.btn.fill{background:var(--tx);color:var(--bg)}.btn.fill:hover{background:var(--ac)}
+.btn.line{border:1px solid rgba(255,255,255,.3)}.btn.line:hover{border-color:var(--ac);color:var(--ac)}
+.rv{opacity:0;transform:translateY(40px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.mask{overflow:hidden}.mask img{transform:scale(1.25);transition:transform 1.6s var(--ease)}.rv.in .mask img,.mask.in img{transform:scale(1)}
+.demo{font-size:.68rem;color:var(--mu);letter-spacing:.1em}
+
+/* ========== HEROES ========== */
+.hero{height:100svh;min-height:620px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 var(--pad) 90px;overflow:hidden}
+.hero .bg{position:absolute;inset:-8% 0;z-index:-2}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(8,8,8,.55),rgba(8,8,8,.25) 40%,var(--bg))}
+.hero h1{font-family:var(--sans);font-weight:800;font-size:clamp(3rem,13.5vw,13rem);line-height:.88;letter-spacing:-.045em}
+.hero .tag{font-family:var(--serif);font-style:italic;font-size:clamp(1.3rem,3vw,2.4rem);margin:26px 0 12px}
+.hero p{max-width:520px;color:var(--mu)}
+.ctas{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+.load>*{opacity:0;transform:translateY(60px);animation:up 1.4s var(--ease) forwards}
+.load>*:nth-child(2){animation-delay:.2s}.load>*:nth-child(3){animation-delay:.4s}.load>*:nth-child(4){animation-delay:.6s}
+@keyframes up{to{opacity:1;transform:none}}
+.scroll{position:absolute;right:var(--pad);bottom:90px;writing-mode:vertical-rl;font-size:.65rem;letter-spacing:.3em;color:var(--mu);display:flex;align-items:center;gap:14px}
+.scroll::after{content:"";width:1px;height:70px;background:linear-gradient(var(--ac),transparent);animation:drop 2s infinite}
+@keyframes drop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.float{position:absolute;border:1px solid rgba(201,164,108,.35);border-radius:50%;animation:fl 9s ease-in-out infinite;z-index:-1}
+@keyframes fl{50%{transform:translateY(-30px) scale(1.06)}}
+
+/* ========== EDITORIAL GRID (stories / works) ========== */
+.ed{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(18px,3vw,44px);margin-top:70px}
+.item{position:relative;cursor:pointer;display:block;text-align:left}
+.item .mask{aspect-ratio:4/5;position:relative}
+.item .mask::after{content:"";position:absolute;inset:0;background:rgba(8,8,8,.45);opacity:0;transition:opacity .5s}
+.item:hover .mask::after{opacity:1}.item:hover img{transform:scale(1.07)}
+.item .go{position:absolute;right:18px;bottom:18px;z-index:2;font-size:.68rem;letter-spacing:.2em;opacity:0;transform:translateY(12px);transition:.5s var(--ease)}
+.item:hover .go{opacity:1;transform:none}
+.item h3{font-family:var(--serif);font-weight:500;font-size:clamp(1.6rem,2.8vw,2.6rem);margin-top:18px;transition:transform .5s var(--ease),color .4s}
+.item:hover h3{transform:translateX(10px);color:var(--ac)}
+.item .meta{font-size:.74rem;color:var(--mu);letter-spacing:.08em;margin:4px 0 8px}
+.item p{color:var(--mu);font-size:.92rem;max-width:44ch}
+.c1{grid-column:1/8}.c1 .mask{aspect-ratio:16/10}
+.c2{grid-column:9/13;margin-top:140px}
+.c3{grid-column:2/6}
+.c4{grid-column:7/13;margin-top:-60px}.c4 .mask{aspect-ratio:3/2}
+.full{grid-column:1/-1}.full .mask{aspect-ratio:21/9}
+@media(max-width:800px){.ed>*{grid-column:1/-1!important;margin-top:0!important}.item .mask,.c1 .mask,.c4 .mask,.full .mask{aspect-ratio:4/3!important}.item .go{opacity:1}}
+
+/* ========== SPLIT / STATEMENT ========== */
+.split{display:grid;grid-template-columns:1.2fr 1fr;gap:6vw;align-items:end}
+.split .pic{aspect-ratio:3/4;margin-top:40px}
+@media(max-width:800px){.split{grid-template-columns:1fr}}
+.stmt{font-family:var(--serif);font-size:clamp(1.8rem,4.4vw,4rem);line-height:1.18;max-width:20em}
+
+/* ========== HORIZONTAL (pinned storytelling) ========== */
+.pin{height:400vh}
+.pin .sticky{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;align-items:center}
+.track{display:flex;gap:4vw;padding:0 var(--pad);will-change:transform}
+.pane{flex:0 0 min(70vw,880px);height:72svh;position:relative;overflow:hidden}
+.pane span{position:absolute;left:28px;bottom:20px;font-family:var(--serif);font-size:clamp(2.4rem,7vw,6rem);z-index:2;text-shadow:0 2px 30px #000}
+.pane::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(0,0,0,.75))}
+.pin h2{position:absolute;top:96px;left:var(--pad);z-index:3}
+@media(max-width:800px){.pin{height:auto}.pin .sticky{position:static;height:auto;display:block;padding:80px 0}.pin h2{position:static;padding:0 var(--pad) 28px}.track{overflow-x:auto;scroll-snap-type:x mandatory;transform:none!important}.pane{flex-basis:80vw;height:60svh;scroll-snap-align:center}}
+
+/* ========== SHOWREEL ========== */
+.reel{position:relative;aspect-ratio:16/8;min-height:320px;overflow:hidden;cursor:pointer;display:grid;place-items:center;text-align:center}
+.reel .bgi{position:absolute;inset:0;transition:transform 1.4s var(--ease)}.reel:hover .bgi{transform:scale(1.05)}
+.reel::before{content:"";position:absolute;inset:0;background:rgba(8,8,8,.55);z-index:1}
+.reel>div{position:relative;z-index:2}
+.play{width:96px;height:96px;border-radius:50%;border:1px solid var(--tx);display:grid;place-items:center;margin:0 auto 22px;position:relative}
+.play::before{content:"";position:absolute;inset:-1px;border-radius:50%;border:1px solid var(--ac);animation:ping 2.4s infinite}
+@keyframes ping{to{transform:scale(1.6);opacity:0}}
+.play svg{width:26px;margin-left:4px}
+
+/* ========== PRINCIPLES ========== */
+.pr{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:70px;border-top:1px solid rgba(255,255,255,.12)}
+.pr div{padding:40px 28px 40px 0}
+.pr h4{font-family:var(--serif);font-weight:500;font-size:1.8rem;margin-bottom:12px}
+.pr p{color:var(--mu);font-size:.92rem}
+@media(max-width:800px){.pr{grid-template-columns:1fr 1fr}}
+
+/* ========== HORIZONTAL POSTERS ========== */
+.hs{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 var(--pad) 20px;scrollbar-width:thin;scrollbar-color:var(--ac) transparent}
+.poster{flex:0 0 clamp(220px,24vw,340px);scroll-snap-align:start;aspect-ratio:2/3;position:relative;overflow:hidden;cursor:pointer;text-align:left}
+.poster img{transition:transform 1s var(--ease)}.poster:hover img{transform:scale(1.08)}
+.poster .ov{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:22px;background:linear-gradient(transparent 30%,rgba(0,0,0,.92));opacity:0;transition:opacity .5s}
+.poster:hover .ov,.poster:focus-visible .ov{opacity:1}
+.poster h4{font-family:var(--serif);font-size:1.6rem;font-weight:500}
+.poster small{color:var(--mu);letter-spacing:.1em}.poster em{font-style:normal;color:var(--ac);font-size:.7rem;letter-spacing:.2em;margin-top:10px}
+@media(pointer:coarse){.poster .ov{opacity:1;background:linear-gradient(transparent 55%,rgba(0,0,0,.9))}}
+
+/* ========== FILMOGRAPHY LIST ========== */
+.fl{margin-top:60px;border-top:1px solid rgba(255,255,255,.12)}
+.fl button{display:grid;grid-template-columns:90px 1.6fr 1fr 1fr;gap:20px;width:100%;text-align:left;padding:28px 0;border-bottom:1px solid rgba(255,255,255,.12);transition:padding .5s var(--ease),color .3s}
+.fl button:hover{padding-left:24px;color:var(--ac)}
+.fl b{font-family:var(--serif);font-weight:500;font-size:clamp(1.3rem,2.4vw,2.2rem)}
+.fl span{color:var(--mu);font-size:.82rem;letter-spacing:.08em;align-self:center}
+.prev{position:fixed;width:300px;aspect-ratio:4/5;z-index:60;pointer-events:none;opacity:0;transform:scale(.85);transition:opacity .35s,transform .45s var(--ease);overflow:hidden}
+.prev.on{opacity:1;transform:scale(1)}
+@media(max-width:800px){.fl button{grid-template-columns:60px 1fr;}.fl span:nth-of-type(n+2){display:none}.prev{display:none}}
+
+/* ========== AWARDS ========== */
+.aw{margin-top:60px}
+.aw div{display:grid;grid-template-columns:90px 1.4fr 1fr 1fr;gap:20px;padding:26px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.aw b{font-weight:600}.aw span{color:var(--mu);font-size:.9rem}
+@media(max-width:800px){.aw div{grid-template-columns:70px 1fr}}
+
+/* ========== CONTACT / FOOTER ========== */
+.big-mail{font-family:var(--serif);font-size:clamp(1.4rem,4vw,3.4rem);border-bottom:1px solid var(--ac);display:inline-block;margin:30px 0}
+.cols{display:flex;gap:50px;flex-wrap:wrap;margin:20px 0 40px}
+footer{padding:80px var(--pad) 40px;border-top:1px solid rgba(255,255,255,.1);background:var(--bg2)}
+.fbig{font-weight:800;letter-spacing:-.04em;line-height:.9;font-size:clamp(2.4rem,11vw,10rem)}
+.frow{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-top:40px;font-size:.78rem;color:var(--mu);letter-spacing:.1em}
+.frow nav,.soc{display:flex;gap:22px;flex-wrap:wrap}.frow a:hover{color:var(--ac)}
+.imdb{background:var(--bg2);text-align:center}
+
+/* ========== MODAL + TOP ========== */
+.modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.88);backdrop-filter:blur(10px);opacity:0;visibility:hidden;transition:.5s var(--ease)}
+.modal.on{opacity:1;visibility:visible}
+.mbox{width:min(1000px,100%);max-height:92svh;overflow:auto;background:var(--bg2);display:grid;grid-template-columns:1fr 1fr;transform:translateY(40px) scale(.97);transition:transform .6s var(--ease)}
+.modal.on .mbox{transform:none}
+.mbox .mi{min-height:320px}.mbox .mt{padding:clamp(24px,4vw,56px)}
+.mbox.vid{grid-template-columns:1fr}.mbox.vid .mi{aspect-ratio:16/9}
+.x{position:absolute;top:20px;right:24px;font-size:.72rem;letter-spacing:.2em;padding:12px}
+@media(max-width:800px){.mbox{grid-template-columns:1fr}}
+.top{position:fixed;right:22px;bottom:22px;z-index:40;width:48px;height:48px;border-radius:50%;background:var(--tx);color:var(--bg);opacity:0;pointer-events:none;transition:.4s}
+.top.on{opacity:1;pointer-events:auto}
+@media(prefers-reduced-motion:reduce){*,*::after{animation:none!important;transition:none!important}.rv,.load>*{opacity:1;transform:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body data-site="drama">
+<div class="cursor" id="cursor"></div>
+
+<!-- ========== NAVIGATION ========== -->
+<header class="nav" id="nav">
+  <a href="#top" class="logo" id="logo">DRAMASPACE</a>
+  <nav class="menu nav-drama"><a href="#d-home">HOME</a><a href="#d-stories">STORIES</a><a href="#d-about">ABOUT</a><a href="#d-reel">SHOWREEL</a><a href="#d-contact">CONTACT</a></nav>
+  <nav class="menu nav-sanjoy"><a href="#s-home">HOME</a><a href="#s-work">WORK</a><a href="#s-film">FILMOGRAPHY</a><a href="#s-awards">AWARDS</a><a href="#s-about">ABOUT</a><a href="#s-contact">CONTACT</a></nav>
+  <div class="switch" role="group" aria-label="Switch demo site"><button data-s="drama">DramaSpace</button><button data-s="sanjoy">Sanjoy</button></div>
+  <button class="burger" id="burger" aria-label="Menu"><i></i><i></i></button>
+</header>
+<div class="sheet" id="sheet"></div>
+
+<!-- ============================================================
+     SITE 1 — DRAMASPACE
+     ============================================================ -->
+<div class="site" id="drama">
+  <section class="hero" id="d-home">
+    <div class="bg" data-par="0.15"><img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=2000&q=75" alt="Film set at night"></div>
+    <i class="float" style="width:220px;height:220px;right:12%;top:22%"></i><i class="float" style="width:90px;height:90px;right:30%;top:48%;animation-delay:-4s"></i>
+    <div class="load">
+      <h1>DRAMA<br>SPACE</h1>
+      <div class="tag">Stories That Feel Like Home.</div>
+      <p>A Bangladeshi drama production house crafting stories inspired by culture, people, life and contemporary realities.</p>
+      <div class="ctas"><a class="btn fill mag" href="#d-stories">EXPLORE OUR STORIES</a><button class="btn line mag" data-reel="DramaSpace Showreel">WATCH SHOWREEL</button></div>
+    </div>
+    <div class="scroll">SCROLL</div>
+  </section>
+
+  <section class="wrap" id="d-stories">
+    <div class="label rv">FEATURED STORIES</div>
+    <h2 class="h-lg rv">Selected productions.</h2>
+    <p class="demo rv" style="margin-top:10px">Demo content — titles and details are placeholders.</p>
+    <div class="ed" data-list="dramaFeatured"></div>
+  </section>
+
+  <section class="wrap" id="d-about" style="background:var(--bg2)">
+    <div class="split">
+      <div><div class="label rv">OUR STORY</div><h2 class="h-xl rv">We Create Stories That Stay With You.</h2></div>
+      <div class="rv"><p class="mu" style="max-width:46ch">DramaSpace makes drama rooted in Bangladeshi culture and everyday life. We look closely at family, friendship, ambition and the quiet pressures of modern society, and give them the scale of cinema.</p>
+        <div class="mask pic"><img src="https://images.unsplash.com/photo-1524712245354-2c4e5e7121c0?auto=format&fit=crop&w=1000&q=75" alt="Clapperboard" loading="lazy"></div></div>
+    </div>
+  </section>
+
+  <section class="pin" id="d-visual">
+    <div class="sticky"><h2 class="h-lg">From Life. Into Stories.</h2>
+      <div class="track" data-track>
+        <div class="pane"><img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1400&q=75" alt="" loading="lazy"><span>Culture.</span></div>
+        <div class="pane"><img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=1400&q=75" alt="" loading="lazy"><span>People.</span></div>
+        <div class="pane"><img src="https://images.unsplash.com/photo-1536440136628-849c177e71a5?auto=format&fit=crop&w=1400&q=75" alt="" loading="lazy"><span>Emotion.</span></div>
+        <div class="pane"><img src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?auto=format&fit=crop&w=1400&q=75" alt="" loading="lazy"><span>Reality.</span></div>
+        <div class="pane"><img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=1400&q=75" alt="" loading="lazy"><span>Imagination.</span></div>
+      </div></div>
+  </section>
+
+  <section id="d-reel"><div class="reel" data-reel="DramaSpace Showreel"><div class="bgi"><img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=2000&q=75" alt=""></div>
+    <div><div class="play"><svg viewBox="0 0 24 24" fill="#F5F5F5"><path d="M5 3l16 9-16 9z"/></svg></div><div class="h-lg">WATCH THE SHOWREEL</div></div></div></section>
+
+  <section class="wrap">
+    <div class="label rv">PRODUCTION PHILOSOPHY</div>
+    <div class="pr rv">
+      <div><h4>Authenticity</h4><p>Stories rooted in real people and real experiences.</p></div>
+      <div><h4>Emotion</h4><p>Characters and moments that connect with audiences.</p></div>
+      <div><h4>Culture</h4><p>A contemporary expression of Bangladeshi identity.</p></div>
+      <div><h4>Vision</h4><p>Stories created with cinematic ambition.</p></div>
+    </div>
+  </section>
+
+  <section style="padding-bottom:100px"><div class="wrap" style="padding-bottom:50px"><div class="label rv">LATEST STORIES</div><h2 class="h-lg rv">Recently on screen.</h2></div>
+    <div class="hs" data-list="dramaLatest"></div></section>
+
+  <footer id="d-contact">
+    <div class="fbig">DramaSpace</div><p class="mu" style="margin-top:14px">Stories. Culture. Cinema.</p>
+    <div class="frow"><nav><a href="#d-home">Home</a><a href="#d-stories">Productions</a><a href="#d-about">About</a><a href="#d-reel">Showreel</a><a href="mailto:hello@dramaspace.example">Contact</a></nav>
+      <div class="soc"><a href="#" onclick="return false">Facebook</a><a href="#" onclick="return false">Instagram</a><a href="#" onclick="return false">YouTube</a></div></div>
+    <p class="frow">© 2026 DramaSpace. Concept demo — all content is placeholder.</p>
+  </footer>
+</div>
+
+<!-- ============================================================
+     SITE 2 — SANJOY SOMADDER
+     ============================================================ -->
+<div class="site" id="sanjoy">
+  <section class="hero" id="s-home">
+    <div class="bg" data-par="0.2"><img src="https://images.unsplash.com/photo-1574267432553-4b4628081c31?auto=format&fit=crop&w=2000&q=75" alt="Empty cinema" ></div>
+    <div class="load">
+      <h1>SANJOY<br>SOMADDER</h1>
+      <div class="tag">Director / Filmmaker</div>
+      <div class="ctas"><a class="btn fill mag" href="#s-work">VIEW SELECTED WORKS</a><button class="btn line mag" data-reel="Sanjoy Somadder — Showreel">WATCH SHOWREEL</button></div>
+    </div>
+    <div class="scroll">SCROLL</div>
+  </section>
+
+  <section class="wrap">
+    <div class="label rv">DIRECTOR STATEMENT</div>
+    <p class="stmt rv">“I tell stories about people, places, emotions and the moments that define us.”</p>
+    <p class="mu rv" style="max-width:52ch;margin-top:40px">Sanjoy Somadder is a Bangladeshi director working across drama and film. <span class="demo">[Demo copy — replace with the director’s approved introduction.]</span></p>
+  </section>
+
+  <section class="wrap" id="s-work" style="padding-top:0">
+    <div class="label rv">SELECTED WORKS</div>
+    <div class="ed" data-list="sanjoyWorks"></div>
+    <p class="demo" style="margin-top:30px">Demo content — project titles, roles and years are placeholders.</p>
+  </section>
+
+  <section id="s-reel"><div class="reel" data-reel="Sanjoy Somadder — Showreel"><div class="bgi"><img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=2000&q=75" alt=""></div>
+    <div><div class="play"><svg viewBox="0 0 24 24" fill="#F5F5F5"><path d="M5 3l16 9-16 9z"/></svg></div><div class="h-xl">SHOWREEL</div><p class="mu" style="margin-top:10px">A collection of stories, frames and moments.</p></div></div></section>
+
+  <section class="wrap" id="s-film">
+    <div class="label rv">FILMOGRAPHY</div><h2 class="h-lg rv">Year by year.</h2>
+    <div class="fl" data-list="film"></div>
+  </section>
+  <div class="prev" id="prev"><img alt=""></div>
+
+  <section class="wrap" id="s-awards" style="background:var(--bg2)">
+    <div class="label rv">RECOGNITION</div><h2 class="h-lg rv">Awards &amp; achievements.</h2>
+    <div class="aw rv" data-list="awards"></div>
+    <p class="demo" style="margin-top:24px">Placeholder entries only — to be replaced with verified awards.</p>
+  </section>
+
+  <section class="wrap" id="s-about">
+    <div class="split"><div class="mask pic rv" style="margin:0"><img src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=1000&q=75" alt="Director portrait placeholder" loading="lazy"></div>
+      <div class="rv"><div class="label">PROFESSIONAL PROFILE</div><h2 class="h-lg">Director. Filmmaker.</h2>
+        <p class="mu" style="margin:24px 0;max-width:46ch">A director drawn to intimate human stories and the textures of Bangladeshi life. His approach favors patient observation, strong performances and images that carry feeling without explanation.</p>
+        <p class="demo">[Demo biography — creative background and professional experience to be supplied by the client.]</p></div></div>
+  </section>
+
+  <section class="wrap imdb"><p class="mu rv">Explore Sanjoy Somadder's professional filmography.</p>
+    <h2 class="h-xl rv" style="margin:20px 0 36px">IMDb</h2>
+    <a class="btn fill mag" href="https://www.imdb.com/name/PLACEHOLDER/" target="_blank" rel="noopener">VIEW ON IMDb</a></section>
+
+  <section class="wrap" id="s-contact">
+    <h2 class="h-xl rv">LET'S CREATE SOMETHING MEANINGFUL.</h2>
+    <a class="big-mail" href="mailto:contact@example.com">contact@example.com</a>
+    <div class="cols"><div><div class="label">PHONE</div>+880 1XXX-XXXXXX</div><div><div class="label">SOCIAL</div><div class="soc"><a href="#" onclick="return false">Instagram</a><a href="#" onclick="return false">Facebook</a><a href="#" onclick="return false">Vimeo</a></div></div></div>
+    <button class="btn fill mag" id="inquiry">SEND A PROFESSIONAL INQUIRY</button>
+  </section>
+
+  <footer><div class="fbig">SANJOY SOMADDER</div><p class="mu" style="margin-top:14px">Director / Filmmaker</p>
+    <p class="frow"><span>© 2026 Sanjoy Somadder. Concept demo.</span><span class="soc"><a href="#" onclick="return false">Instagram</a><a href="#" onclick="return false">Facebook</a><a href="#" onclick="return false">Vimeo</a></span></p></footer>
+</div>
+
+<!-- Modal + back to top -->
+<div class="modal" id="modal" aria-modal="true" role="dialog"><button class="x" id="mx">CLOSE</button><div class="mbox" id="mbox"></div></div>
+<button class="top" id="top" aria-label="Back to top">↑</button>
+
+<script>
+/* ========== DEMO DATA (placeholder content) ========== */
+const U=(id,w=1200)=>`https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=75`;
+const IMG={a:'photo-1478720568477-152d9b164e26',b:'photo-1489599849927-2ee91cede3ba',c:'photo-1536440136628-849c177e71a5',d:'photo-1440404653325-ab127d49abc1',e:'photo-1517604931442-7e0c8ed2963c',f:'photo-1524712245354-2c4e5e7121c0',g:'photo-1583417319070-4a69db38a482',h:'photo-1574267432553-4b4628081c31',i:'photo-1485846234645-a62644f84728'};
+const DATA={
+ dramaFeatured:[
+  {cls:'c1',t:'Monsoon Letters',y:2025,g:'Family Drama',d:'A household waits out the rains and finally says what it has avoided for years.',i:IMG.g},
+  {cls:'c2',t:'Last Tram to Old Dhaka',y:2024,g:'Urban Romance',d:'Two strangers, one late-night route, a city that keeps rearranging itself.',i:IMG.d},
+  {cls:'c3',t:'The River Does Not Ask',y:2025,g:'Social Drama',d:'A village teacher faces a choice between duty and a future elsewhere.',i:IMG.e},
+  {cls:'c4',t:'Tea Stall Hours',y:2023,g:'Contemporary',d:'Small conversations at a roadside stall reveal a neighbourhood’s big worries.',i:IMG.c}],
+ dramaLatest:['Monsoon Letters|2025|Family Drama|'+IMG.g,'Last Tram to Old Dhaka|2024|Romance|'+IMG.d,'The River Does Not Ask|2025|Social|'+IMG.e,'Tea Stall Hours|2023|Contemporary|'+IMG.c,'Paper Boats|2023|Youth|'+IMG.f,'Rooftop Season|2022|Slice of life|'+IMG.h].map(s=>{const p=s.split('|');return{t:p[0],y:p[1],g:p[2],i:p[3],d:'Placeholder synopsis for this demo story.'}}),
+ sanjoyWorks:[
+  {cls:'full rv',t:'Untitled Feature I',y:'2025',r:'Director',g:'Drama',d:'Placeholder project: a quiet portrait of a family at a turning point.',i:IMG.i},
+  {cls:'c3',t:'Untitled Short II',y:'2023',r:'Director',g:'Short film',d:'Placeholder project exploring memory and migration.',i:IMG.a},
+  {cls:'c4',t:'Untitled Series III',y:'2022',r:'Director',g:'Television drama',d:'Placeholder project set in contemporary Dhaka.',i:IMG.b}],
+ film:[['2025','Untitled Feature I','Director','Feature',IMG.i],['2023','Untitled Short II','Director','Short',IMG.a],['2022','Untitled Series III','Director','Drama series',IMG.b],['2020','Untitled Film IV','Director','Feature',IMG.h],['2018','Untitled Drama V','Director','Television',IMG.d]],
+ awards:[['2025','Award name (placeholder)','Festival / organization','Project'],['2023','Award name (placeholder)','Festival / organization','Project'],['2021','Award name (placeholder)','Festival / organization','Project'],['2019','Award name (placeholder)','Festival / organization','Project']]
+};
+
+/* ========== RENDER LISTS ========== */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+$$('[data-list]').forEach(el=>{
+  const k=el.dataset.list,d=DATA[k];
+  if(k==='dramaFeatured'||k==='sanjoyWorks'){
+    el.innerHTML=d.map((p,n)=>`<button class="item rv ${p.cls}" data-modal="${k}:${n}"><div class="mask"><img src="${U(p.i,1400)}" alt="${p.t}" loading="lazy"><span class="go">VIEW DETAILS</span></div><h3>${p.t}</h3><div class="meta">${p.y} · ${p.r?p.r+' · ':''}${p.g}</div><p>${p.d}</p></button>`).join('');
+  }else if(k==='dramaLatest'){
+    el.innerHTML=d.map((p,n)=>`<button class="poster" data-modal="${k}:${n}"><img src="${U(p.i,700)}" alt="${p.t}" loading="lazy"><div class="ov"><small>${p.g} · ${p.y}</small><h4>${p.t}</h4><em>VIEW STORY</em></div></button>`).join('');
+  }else if(k==='film'){
+    el.innerHTML=d.map(r=>`<button data-img="${U(r[4],600)}"><span>${r[0]}</span><b>${r[1]}</b><span>${r[2]}</span><span>${r[3]}</span></button>`).join('');
+  }else if(k==='awards'){
+    el.innerHTML=d.map(r=>`<div><span>${r[0]}</span><b>${r[1]}</b><span>${r[2]}</span><span>${r[3]}</span></div>`).join('');
+  }
+});
+
+/* ========== SITE SWITCH + NAV ========== */
+const body=document.body,logo=$('#logo'),sheet=$('#sheet'),burger=$('#burger');
+function setSite(s){
+  body.dataset.site=s;logo.textContent=s==='drama'?'DRAMASPACE':'SANJOY SOMADDER';
+  const links=$$(s==='drama'?'.nav-drama a':'.nav-sanjoy a').map(a=>`<a href="${a.getAttribute('href')}">${a.textContent}</a>`).join('');
+  sheet.innerHTML=links;window.scrollTo({top:0,behavior:'instant'});
+  document.title=(s==='drama'?'DramaSpace':'Sanjoy Somadder')+' — Concept Demo';
+  setTimeout(observe,50);
+}
+$$('.switch button').forEach(b=>b.onclick=()=>setSite(b.dataset.s));
+function closeSheet(){sheet.classList.remove('open');burger.classList.remove('open')}
+burger.onclick=()=>{sheet.classList.toggle('open');burger.classList.toggle('open')};
+sheet.onclick=e=>{if(e.target.tagName==='A')closeSheet()};
+logo.onclick=e=>{e.preventDefault();window.scrollTo({top:0,behavior:'smooth'})};
+
+/* ========== SCROLL: nav state, parallax, pinned track, active links, top ========== */
+const nav=$('#nav'),topBtn=$('#top');
+function onScroll(){
+  const y=scrollY;nav.classList.toggle('small',y>80);topBtn.classList.toggle('on',y>900);
+  $$('.site:not([style*="none"]) [data-par]').forEach(el=>{if(el.offsetParent)el.style.transform=`translateY(${y*el.dataset.par}px)`});
+  const pin=$('#drama .pin');
+  if(pin&&innerWidth>800&&body.dataset.site==='drama'){
+    const r=pin.getBoundingClientRect(),t=$('[data-track]',pin),p=Math.min(1,Math.max(0,-r.top/(r.height-innerHeight)));
+    t.style.transform=`translateX(${-p*(t.scrollWidth-innerWidth+80)}px)`;
+  }
+  const links=$$(`.nav-${body.dataset.site} a`);let cur=null;
+  links.forEach(a=>{const s=$(a.getAttribute('href'));if(s&&s.getBoundingClientRect().top<innerHeight*.45)cur=a});
+  links.forEach(a=>a.classList.toggle('on',a===cur));
+}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+topBtn.onclick=()=>scrollTo({top:0,behavior:'smooth'});
+
+/* ========== SCROLL REVEAL ========== */
+let io;
+function observe(){
+  io&&io.disconnect();
+  io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+  $$('.rv').forEach(el=>{if(el.offsetParent)io.observe(el)});
+}
+observe();
+
+/* ========== CURSOR + MAGNETIC BUTTONS ========== */
+const cur=$('#cursor');let cx=0,cy=0,tx=0,ty=0;
+addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY});
+(function loop(){cx+=(tx-cx)*.18;cy+=(ty-cy)*.18;cur.style.transform=`translate(${cx-7}px,${cy-7}px)`;requestAnimationFrame(loop)})();
+document.addEventListener('mouseover',e=>cur.classList.toggle('big',!!e.target.closest('.item,.poster,.reel,.fl button')));
+document.addEventListener('mousemove',e=>{
+  const b=e.target.closest('.mag');
+  $$('.mag').forEach(m=>{if(m!==b)m.style.transform=''});
+  if(b){const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.25}px,${(e.clientY-r.top-r.height/2)*.35}px)`}
+});
+
+/* ========== FILMOGRAPHY HOVER PREVIEW ========== */
+const prev=$('#prev'),pi=$('img',prev);
+document.addEventListener('mousemove',e=>{prev.style.left=(e.clientX+30)+'px';prev.style.top=(e.clientY-150)+'px'});
+document.addEventListener('mouseover',e=>{const b=e.target.closest('.fl button');if(b){pi.src=b.dataset.img;prev.classList.add('on')}else prev.classList.remove('on')});
+
+/* ========== MODALS (project details + showreel) ========== */
+const modal=$('#modal'),mbox=$('#mbox');
+function openModal(html,vid){mbox.className='mbox'+(vid?' vid':'');mbox.innerHTML=html;modal.classList.add('on');body.style.overflow='hidden'}
+function closeModal(){modal.classList.remove('on');body.style.overflow=''}
+$('#mx').onclick=closeModal;modal.onclick=e=>{if(e.target===modal)closeModal()};
+addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeSheet()}});
+document.addEventListener('click',e=>{
+  const m=e.target.closest('[data-modal]'),r=e.target.closest('[data-reel]');
+  if(m){const[k,n]=m.dataset.modal.split(':'),p=DATA[k][n];
+    openModal(`<div class="mi"><img src="${U(p.i,1000)}" alt="${p.t}"></div><div class="mt"><div class="label">${p.g.toUpperCase()}</div><h3 class="h-lg">${p.t}</h3><p class="mu" style="margin:18px 0">${p.y}${p.r?' · '+p.r:''}</p><p>${p.d}</p><p class="demo" style="margin-top:30px">Demo modal — full credits, stills and trailer would appear here.</p></div>`)}
+  if(r)openModal(`<div class="mi reel" style="min-height:0;cursor:default"><div class="bgi"><img src="${U(IMG.i,1600)}" alt=""></div><div><div class="play"><svg viewBox="0 0 24 24" fill="#F5F5F5"><path d="M5 3l16 9-16 9z"/></svg></div><p>${r.dataset.reel}</p><p class="demo">Video placeholder — embed the final reel here.</p></div></div>`,true);
+});
+$('#inquiry').onclick=()=>openModal(`<div class="mt"><div class="label">PROFESSIONAL INQUIRY</div><h3 class="h-lg">Tell us about your project.</h3><p class="mu" style="margin:20px 0 28px">Demo form — nothing is sent.</p><div style="display:grid;gap:14px"><input id="f1" placeholder="Your name" style="padding:16px;background:#080808;border:1px solid #333;color:#fff;font:inherit"><input placeholder="Email" style="padding:16px;background:#080808;border:1px solid #333;color:#fff;font:inherit"><textarea placeholder="Project details" rows="4" style="padding:16px;background:#080808;border:1px solid #333;color:#fff;font:inherit"></textarea><button class="btn fill" id="send">SEND INQUIRY</button></div></div>`,true);
+document.addEventListener('click',e=>{if(e.target.id==='send'){mbox.innerHTML='<div class="mt"><div class="label">SENT</div><h3 class="h-lg">Thank you.</h3><p class="mu" style="margin-top:16px">This is a demo, so no message was sent.</p></div>'}});
+
+setSite('drama');
+</script>
+</body>
+</html>
